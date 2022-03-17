@@ -16,12 +16,21 @@ const notificationSlice = createSlice({
   },
 });
 
+let timeoutID;
+
 export const setNotification = (message, delay) => async (dispatch) => {
+  if (message !== '') {
+    clearMessage();
+  }
   dispatch(createNotification(message));
-  setTimeout(() => {
+  timeoutID = setTimeout(() => {
     dispatch(removeMessage());
   }, delay * 1000);
 };
+
+function clearMessage() {
+  clearTimeout(timeoutID);
+}
 
 export const removeMessage = () => async (dispatch) => {
   dispatch(removeNotification());

@@ -1,13 +1,14 @@
-import { useDispatch } from 'react-redux';
+/* eslint-disable react/prop-types */
+/* eslint-disable no-shadow */
+import { connect } from 'react-redux';
 import React from 'react';
 import { setFilter } from '../reducers/filterReducer';
 
-function Filter() {
-  const dispatch = useDispatch();
-
+function Filter({ setFilter }) {
   const handleChange = (event) => {
-    dispatch(setFilter({ filter: event.target.value }));
+    setFilter({ filter: event.target.value });
   };
+
   const style = {
     marginBottom: 10,
   };
@@ -21,4 +22,4 @@ function Filter() {
   );
 }
 
-export default Filter;
+export default connect(null, { setFilter })(Filter);
