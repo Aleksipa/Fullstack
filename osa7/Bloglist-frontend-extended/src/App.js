@@ -1,5 +1,6 @@
 /* eslint-disable no-alert */
 import React, { useState, useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
@@ -8,13 +9,14 @@ import LoginForm from "./components/LoginForm";
 import Footer from "./components/Footer";
 import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
+import { setNotification } from "./reducers/notificationReducer";
 
 function App() {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [notificationMessage, setNotificationMessage] = useState(null);
+  const dispatch = useDispatch();
 
   const blogFormRef = useRef();
 
@@ -32,10 +34,7 @@ function App() {
   }, []);
 
   const notifyWith = (message, type = "success") => {
-    setNotificationMessage({ message, type });
-    setTimeout(() => {
-      setNotificationMessage(null);
-    }, 5000);
+    dispatch(setNotification(message, type));
   };
 
   const handleLogin = async (event) => {
@@ -118,7 +117,7 @@ function App() {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification notification={notificationMessage} />
+      <Notification />
       {user === null ? (
         <LoginForm
           username={username}
