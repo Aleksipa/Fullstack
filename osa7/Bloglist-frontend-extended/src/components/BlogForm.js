@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 function BlogForm({ createBlog }) {
   const [newTitle, setNewTitle] = useState("");
   const [newAuthor, setNewAuthor] = useState("");
   const [newUrl, setNewUrl] = useState("");
+  const navigate = useNavigate();
 
   const addBlog = (event) => {
     event.preventDefault();
@@ -17,6 +19,7 @@ function BlogForm({ createBlog }) {
     setNewTitle("");
     setNewAuthor("");
     setNewUrl("");
+    navigate("/");
   };
 
   BlogForm.propTypes = {

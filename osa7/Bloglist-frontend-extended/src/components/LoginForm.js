@@ -1,37 +1,67 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { TextField, Button } from "@material-ui/core";
+import { setNotification } from "../reducers/notificationReducer";
+import { login } from "../reducers/loginReducer";
 
-function LoginForm({
-  handleSubmit,
-  handleUsernameChange,
-  handlePasswordChange,
-  username,
-  password,
-}) {
+function LoginForm() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleUserNameChange = (event) => {
+    setUsername(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+
+    if (username === "" || password === "") {
+      dispatch(setNotification("Username and password are required", "error"));
+      return;
+    }
+
+    try {
+      dispatch(login(username, password));
+      navigate("/");
+    } catch (err) {
+      dispatch(setNotification("Wrong credentials", "error"));
+    }
+  };
+
   return (
     <div>
       <h2>Login</h2>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleLogin}>
         <div>
-          username
-          <input
+          <TextField
+            label="username"
             value={username}
-            onChange={handleUsernameChange}
+            onChange={handleUserNameChange}
             id="username"
           />
         </div>
         <div>
-          password
-          <input
+          <TextField
+            label="password"
             type="password"
             value={password}
             onChange={handlePasswordChange}
             id="password"
           />
         </div>
-        <button id="login-button" type="submit">
-          login
-        </button>
+        <div>
+          <Button variant="contained" color="primary" type="submit">
+            login
+          </Button>
+        </div>
       </form>
     </div>
   );

@@ -1,19 +1,22 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
+import { BrowserRouter as Router } from "react-router-dom";
 import App from "./App";
-import notificationReducer from "./reducers/notificationReducer";
+import store from "./store";
 
-const store = configureStore({
-  reducer: {
-    notification: notificationReducer,
-  },
-});
+<head>
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+  />
+</head>;
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <Router>
+      <App />
+    </Router>
   </Provider>,
   document.getElementById("root")
 );
