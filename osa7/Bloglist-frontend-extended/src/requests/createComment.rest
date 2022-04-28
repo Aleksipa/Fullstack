@@ -1,0 +1,7 @@
+POST http://localhost:3003/api/blogs/6246b4bc3f367e1d86c5c48a/comments 
+Content-Type: application/json 
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlcHBvIiwiaWQiOiI2MjQyMDE3Y2ExZWRjYWViMmNlMThmNGMiLCJpYXQiOjE2NDkxNTY1OTF9.xYSBTU5WGLk9DhWq4zTekFSuUpjCbxLq3Kk2lqKaBDU
+
+{
+"content": "Hieno kommentti"
+}
