@@ -1,19 +1,62 @@
 import { useEffect, useState } from "react";
+import { useQuery, useApolloClient, useSubscription } from "@apollo/client";
+
 import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
-import { useQuery, useApolloClient } from "@apollo/client";
-import { ALL_AUTHORS, ALL_BOOKS } from "./queries";
 import LoginForm from "./components/LoginForm";
 import Recommend from "./components/Recommend";
+import { ALL_BOOKS_AND_ALL_AUTHORS, BOOK_ADDED } from "./queries";
+
+export const updateCache = (cache, query, addedBook) => {
+  const uniqById = (a) => {
+    let seen = new Set();
+    return a.filter((item) => {
+      let k = item.id;
+      return seen.has(k) ? false : seen.add(k);
+    });
+  };
+
+  cache.updateQuery(query, (data) => {
+    const authorExists = data.allAuthors.find(
+      (author) => author.id === addedBook.author.id
+    );
+
+    return {
+      ...data,
+      allBooks: uniqById([...data.allBooks, addedBook]),
+
+      allAuthors: authorExists
+        ? data.allAuthors.map((author) =>
+            author.id === addedBook.author.id ? addedBook.author : author
+          )
+        : [...data.allAuthors, addedBook.author],
+    };
+  });
+};
 
 const App = () => {
   const client = useApolloClient();
   const [page, setPage] = useState("authors");
   const [errorMessage, setErrorMessage] = useState(null);
-  const authorResults = useQuery(ALL_AUTHORS);
-  const bookResults = useQuery(ALL_BOOKS);
   const [token, setToken] = useState(null);
+  const [genre, setGenre] = useState("");
+  const { data, loading } = useQuery(ALL_BOOKS_AND_ALL_AUTHORS, {
+    variables: { genre },
+  });
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const addedBook = subscriptionData.data.bookAdded;
+      notify(`${addedBook.title} added to the library`);
+
+      updateCache(
+        client.cache,
+        { query: ALL_BOOKS_AND_ALL_AUTHORS, variables: { genre } },
+        addedBook
+      );
+    },
+  });
 
   useEffect(() => {
     const token = localStorage.getItem("library-user-token");
@@ -22,7 +65,7 @@ const App = () => {
     }
   }, []);
 
-  if (authorResults.loading || bookResults.loading) {
+  if (loading) {
     return <div>loading...</div>;
   }
 
@@ -62,12 +105,15 @@ const App = () => {
       </div>
       <Notify errorMessage={errorMessage} />
 
-      <Authors
-        show={page === "authors"}
-        authors={authorResults.data.allAuthors}
-      />
+      <Authors show={page === "authors"} authors={data?.allAuthors} />
 
-      <Books show={page === "books"} books={bookResults.data.allBooks} />
+      <Books
+        show={page === "books"}
+        books={data?.allBooks}
+        filterGenre={genre}
+        setFilterGenre={setGenre}
+        genres={data?.allGenres}
+      />
 
       <NewBook show={page === "add"} />
 

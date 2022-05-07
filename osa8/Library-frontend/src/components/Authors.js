@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
-import { ALL_AUTHORS, EDIT_AUTHOR } from "../queries";
+import { ALL_BOOKS_AND_ALL_AUTHORS, EDIT_AUTHOR } from "../queries";
 import Select from "react-select";
 
 const Authors = ({ authors, show }) => {
@@ -8,10 +8,10 @@ const Authors = ({ authors, show }) => {
   const [born, setBorn] = useState("");
 
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
-    refetchQueries: [{ query: ALL_AUTHORS }],
+    refetchQueries: [{ query: ALL_BOOKS_AND_ALL_AUTHORS }],
   });
 
-  const options = authors.map((author) => ({
+  const options = authors?.map((author) => ({
     value: author.name,
     label: author.name,
   }));
@@ -43,7 +43,7 @@ const Authors = ({ authors, show }) => {
             <th>born</th>
             <th>books</th>
           </tr>
-          {authors.map((a) => (
+          {authors?.map((a) => (
             <tr key={a.name}>
               <td>{a.name}</td>
               <td>{a.born}</td>

@@ -1,15 +1,18 @@
 import { useEffect } from "react";
 import { useQuery } from "@apollo/client";
-import { ALL_BOOKS, ME } from "../queries";
+import { ALL_BOOKS_AND_ALL_AUTHORS, ME } from "../queries";
 
 const Recommend = ({ show }) => {
   const { data: meData } = useQuery(ME);
 
   const favoriteGenre = meData?.me?.favoriteGenre;
-  const { data, loading, error, refetch } = useQuery(ALL_BOOKS, {
-    variables: { genre: favoriteGenre },
-    pollInterval: 500,
-  });
+
+  const { data, loading, error, refetch } = useQuery(
+    ALL_BOOKS_AND_ALL_AUTHORS,
+    {
+      variables: { genre: favoriteGenre },
+    }
+  );
 
   useEffect(() => {
     refetch();

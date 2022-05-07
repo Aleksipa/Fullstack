@@ -1,32 +1,7 @@
-import { useEffect, useState } from "react";
-import { useQuery } from "@apollo/client";
-import { ALL_BOOKS } from "../queries";
-
-const Books = ({ books, show }) => {
-  const [filterGenre, setFilterGenre] = useState("");
-  const { data, loading, error, refetch } = useQuery(ALL_BOOKS, {
-    variables: { genre: filterGenre },
-  });
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
-
-  const filteredBooks = data?.allBooks;
-
-  const uniqueGenres = books.reduce((acc, book) => {
-    if (!acc.includes(book.genres[0]) && book.genres[0] !== undefined) {
-      acc.push(book.genres[0]);
-    }
-    return acc;
-  }, []);
-
+const Books = ({ books, show, filterGenre, setFilterGenre, genres }) => {
   if (!show) {
     return null;
   }
-
-  if (loading) return <div>Loading</div>;
-  if (error) return <div>error</div>;
 
   return (
     <div>
@@ -41,7 +16,7 @@ const Books = ({ books, show }) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {filteredBooks.map((a) => (
+          {books.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>
@@ -52,7 +27,7 @@ const Books = ({ books, show }) => {
       </table>
 
       <div>
-        {uniqueGenres.map((genre) => (
+        {genres.map((genre) => (
           <button
             key={genre}
             onClick={() => {
