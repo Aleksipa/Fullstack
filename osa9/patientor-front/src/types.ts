@@ -27,6 +27,13 @@ interface HospitalEntry extends BaseEntry {
   };
 }
 
+export enum HealthCheckRating {
+  "Healthy" = 0,
+  "LowRisk" = 1,
+  "HighRisk" = 2,
+  "CriticalRisk" = 3,
+}
+
 interface OccupationalHealthcareEntry extends BaseEntry {
   type: "OccupationalHealthcare";
   employerName: string;
@@ -49,3 +56,13 @@ export interface Patient {
 }
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
+
+// Add these new types
+export type HospitalEntryFormValues = Omit<HospitalEntry, "id">;
+export type OccupationalHealthcareEntryFormValues = Omit<
+  OccupationalHealthcareEntry,
+  "id"
+>;
+export type EntryFormValues =
+  | HospitalEntryFormValues
+  | OccupationalHealthcareEntryFormValues;
