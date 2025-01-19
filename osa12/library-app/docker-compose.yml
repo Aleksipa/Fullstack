@@ -1,0 +1,23 @@
+services:
+  app:
+    image: library-app-frontend:prod
+    environment:
+      - NODE_ENV=production
+
+  server:
+    image: library-app-backend:prod
+    environment:
+      - MONGODB_URI=mongodb+srv://aleksipee:8u5HaFGel4oHnKfQ@cluster0.pu8tl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      - SECRET=your_secret_key_here
+      - PORT=4000
+
+  nginx:
+    image: nginx:1.20.1
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 8080:80
+    container_name: reverse-proxy
+    depends_on:
+      - app
+      - server
