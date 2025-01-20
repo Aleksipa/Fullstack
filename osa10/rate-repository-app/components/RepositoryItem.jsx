@@ -62,7 +62,7 @@ const formatNumber = (num) => {
 
 const RepositoryItem = ({ item }) => {
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="repositoryItem">
       <View style={styles.headerContainer}>
         <View style={styles.avatarContainer}>
           <Image
