@@ -1,21 +1,40 @@
-import React from 'react';
-import { useQuery } from '@apollo/client';
-import { GET_REPOSITORIES } from '../graphql/queries';
+import React, { useState } from 'react';
+import useRepositories from '../hooks/useRepositories';
 import { RepositoryListContainer } from './RepositoryListContainer';
+import RepositoryListHeader from './RepositoryListHeader';
 
 const RepositoryList = () => {
-  const { data, loading } = useQuery(GET_REPOSITORIES, {
-    fetchPolicy: 'cache-and-network',
-  });
+  const [selectedSorting, setSelectedSorting] = useState('latest');
+
+  const getSortingParams = (sorting) => {
+    switch (sorting) {
+      case 'highest':
+        return { orderBy: 'RATING_AVERAGE', orderDirection: 'DESC' };
+      case 'lowest':
+        return { orderBy: 'RATING_AVERAGE', orderDirection: 'ASC' };
+      case 'latest':
+      default:
+        return { orderBy: 'CREATED_AT', orderDirection: 'DESC' };
+    }
+  };
+
+  const { orderBy, orderDirection } = getSortingParams(selectedSorting);
+  const { repositories, loading } = useRepositories({ orderBy, orderDirection });
 
   if (loading) {
     return null;
   }
 
-  const repositories = data?.repositories;
-
   return (
-    <RepositoryListContainer repositories={repositories} />
+    <RepositoryListContainer
+      repositories={repositories}
+      ListHeaderComponent={
+        <RepositoryListHeader
+          selectedSorting={selectedSorting}
+          setSelectedSorting={setSelectedSorting}
+        />
+      }
+    />
   );
 };
 
