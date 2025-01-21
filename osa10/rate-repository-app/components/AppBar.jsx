@@ -31,6 +31,7 @@ const AppBar = () => {
   const apolloClient = useApolloClient();
   const navigate = useNavigate();
   const { data } = useQuery(ME);
+  const isSignedIn = data?.me;
   
   const signOut = async () => {
     await authStorage.removeAccessToken();
@@ -44,7 +45,7 @@ const AppBar = () => {
         <Link to="/" component={Pressable} style={styles.tab}>
           <Text style={styles.tabText}>Repositories</Text>
         </Link>
-        {data?.me ? (
+        {isSignedIn ? (
           <>
             <Link to="/create-review" component={Pressable} style={styles.tab}>
               <Text style={styles.tabText}>Create a review</Text>
@@ -54,9 +55,14 @@ const AppBar = () => {
             </Pressable>
           </>
         ) : (
-          <Link to="/signin" component={Pressable} style={styles.tab}>
-            <Text style={styles.tabText}>Sign in</Text>
-          </Link>
+          <>
+            <Link to="/signin" component={Pressable} style={styles.tab}>
+              <Text style={styles.tabText}>Sign in</Text>
+            </Link>
+            <Link to="/signup" component={Pressable} style={styles.tab}>
+              <Text style={styles.tabText}>Sign up</Text>
+            </Link>
+          </>
         )}
       </ScrollView>
     </View>
