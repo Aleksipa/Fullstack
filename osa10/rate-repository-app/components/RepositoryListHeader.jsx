@@ -1,23 +1,34 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { Searchbar } from 'react-native-paper';
 import theme from '../theme';
 
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: theme.spacing.medium,
     backgroundColor: theme.colors.white,
-    marginTop: -15,
+    paddingTop: 15,
   },
   picker: {
     backgroundColor: theme.colors.white,
     marginVertical: -8,
   },
+  searchbar: {
+    marginVertical: 10,
+    backgroundColor: theme.colors.mainBackground,
+  },
 });
 
-const RepositoryListHeader = ({ selectedSorting, setSelectedSorting }) => {
+const RepositoryListHeader = ({ selectedSorting, setSelectedSorting, searchQuery, onSearchChange }) => {
   return (
     <View style={styles.container}>
+      <Searchbar
+        placeholder="Search repositories..."
+        onChangeText={onSearchChange}
+        value={searchQuery}
+        style={styles.searchbar}
+      />
       <Picker
         style={styles.picker}
         selectedValue={selectedSorting}

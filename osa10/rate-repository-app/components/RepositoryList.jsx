@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-native';
+import { useDebounce } from 'use-debounce';
 import useRepositories from '../hooks/useRepositories';
 import { RepositoryListContainer } from './RepositoryListContainer';
-import RepositoryListHeader from './RepositoryListHeader';
 
 const RepositoryList = () => {
   const [selectedSorting, setSelectedSorting] = useState('latest');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 500);
+  const navigate = useNavigate();
 
   const getSortingParams = (sorting) => {
     switch (sorting) {
@@ -19,7 +23,11 @@ const RepositoryList = () => {
   };
 
   const { orderBy, orderDirection } = getSortingParams(selectedSorting);
-  const { repositories, loading } = useRepositories({ orderBy, orderDirection });
+  const { repositories, loading } = useRepositories({
+    orderBy,
+    orderDirection,
+    searchKeyword: debouncedSearchQuery,
+  });
 
   if (loading) {
     return null;
@@ -28,12 +36,11 @@ const RepositoryList = () => {
   return (
     <RepositoryListContainer
       repositories={repositories}
-      ListHeaderComponent={
-        <RepositoryListHeader
-          selectedSorting={selectedSorting}
-          setSelectedSorting={setSelectedSorting}
-        />
-      }
+      selectedSorting={selectedSorting}
+      setSelectedSorting={setSelectedSorting}
+      searchQuery={searchQuery}
+      onSearchChange={setSearchQuery}
+      navigate={navigate}
     />
   );
 };
